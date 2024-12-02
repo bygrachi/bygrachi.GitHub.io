@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="bygrachi website">
+    <meta name="author" content="bygrachi">
+    <title>bygrachi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            background-color: #f0f0f0;
+            padding: 10px;
+            text-align: center;
+        }
+        nav {
+            margin: 10px 0;
+        }
+        .producto-form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .producto-form input, .producto-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .producto-form button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .productos-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .producto-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: white;
+        }
+        .producto-card img {
+            max-width: 100%;
+            height: auto;
+        }
+        .precio {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="prueba2.html">Ir a página 2</a>
+        </nav>
+        <h1>bygrachi - Productos</h1>
+    </header>
+    <main>
+        <div class="producto-form">
+            <h2>Agregar Nuevo Producto</h2>
+            <form id="formularioProducto" onsubmit="agregarProducto(event)">
+                <input type="text" id="nombre" placeholder="Nombre del producto" required>
+                <input type="number" id="precio" placeholder="Precio" step="0.01" required>
+                <input type="url" id="imagen" placeholder="URL de la imagen">
+                <textarea id="descripcion" placeholder="Descripción del producto" required></textarea>
+                <button type="submit">Agregar Producto</button>
+            </form>
+        </div>
+
+        <div id="listaProductos" class="productos-lista">
+            <!-- Aquí se mostrarán los productos -->
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 bygrachi. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Array para almacenar los productos
+        let productos = [];
+
+        function agregarProducto(event) {
+            event.preventDefault();
+            
+            const producto = {
+                nombre: document.getElementById('nombre').value,
+                precio: parseFloat(document.getElementById('precio').value),
+                imagen: document.getElementById('imagen').value || 'https://via.placeholder.com/150',
+                descripcion: document.getElementById('descripcion').value,
+                id: Date.now() // Identificador único
+            };
+
+            productos.push(producto);
+            mostrarProductos();
+            document.getElementById('formularioProducto').reset();
+            
+            // Guardar en localStorage
+            localStorage.setItem('productos', JSON.stringify(productos));
+        }
+
+        function mostrarProductos() {
+            const contenedor = document.getElementById('listaProductos');
+            contenedor.innerHTML = '';
+
+            productos.forEach(producto => {
+                const card = document.createElement('div');
+                card.className = 'producto-card';
+                card.innerHTML = `
+                    <img src="${producto.imagen}" alt="${producto.nombre}">
+                    <h3>${producto.nombre}</h3>
+                    <p class="precio">$${producto.precio.toFixed(2)}</p>
+                    <p>${producto.descripcion}</p>
+                    <button onclick="eliminarProducto(${producto.id})">Eliminar</button>
+                `;
+                contenedor.appendChild(card);
+            });
+        }
+
+        function eliminarProducto(id) {
+            productos = productos.filter(producto => producto.id !== id);
+            mostrarProductos();
+            localStorage.setItem('productos', JSON.stringify(productos));
+        }
+
+        // Cargar productos guardados al iniciar
+        window.onload = function() {
+            const productosGuardados = localStorage.getItem('productos');
+            if (productosGuardados) {
+                productos = JSON.parse(productosGuardados);
+                mostrarProductos();
+            }
+        };
+    </script>
+</body>
+</html>
+
+

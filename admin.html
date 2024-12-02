@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#FF9EC3">
+    <title>bygrachi - Panel de Administración</title>
+    <style>
+        :root {
+            --color-principal: #FF9EC3;
+            --color-secundario: #FFB6C9;
+            --color-acento: #FF69B4;
+            --color-texto: #4A4A4A;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-secundario);
+        }
+
+        .admin-header {
+            background-color: var(--color-principal);
+            color: var(--color-texto);
+            padding: 20px;
+        }
+
+        .admin-nav {
+            background-color: var(--color-acento);
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .admin-nav a:hover {
+            background-color: white;
+            color: var(--color-acento);
+        }
+
+        .producto-form {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            border: 1px solid var(--color-principal);
+        }
+
+        .producto-form button {
+            background-color: var(--color-acento);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .producto-form button:hover {
+            background-color: var(--color-principal);
+        }
+
+        .logout-btn {
+            background-color: #FF4757;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .producto-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--color-principal);
+        }
+
+        .editar-btn {
+            background-color: var(--color-acento);
+            color: white;
+            border-radius: 15px;
+        }
+
+        .eliminar-btn {
+            background-color: #FF4757;
+            color: white;
+            border-radius: 15px;
+        }
+
+        .productos-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .producto-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .producto-card button {
+            margin: 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .editar-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        .eliminar-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .logo-preview img {
+            max-width: 300px;
+            margin: 15px 0;
+        }
+
+        .admin-header h1 {
+            font-size: 3.5em;
+            margin: 0;
+            text-align: center;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            color: #4A4A4A;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .imagen-upload {
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px dashed var(--color-acento);
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .imagen-upload input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+
+        .imagen-preview {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .imagen-preview img {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 3px;
+        }
+
+        /* Media queries para diferentes dispositivos */
+        @media screen and (max-width: 1200px) {
+            .productos-lista {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .admin-header h1 {
+                font-size: 2.5em;
+            }
+
+            .producto-form {
+                padding: 15px;
+                margin: 15px;
+            }
+
+            main {
+                padding: 10px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .admin-header h1 {
+                font-size: 2em;
+            }
+
+            .admin-nav {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .productos-lista {
+                grid-template-columns: 1fr;
+            }
+
+            .producto-card img {
+                height: 150px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Estilos para compatibilidad cross-browser */
+        * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        input, 
+        select, 
+        textarea, 
+        button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            font-family: inherit;
+        }
+
+        /* Soporte para navegadores antiguos */
+        @supports not (display: grid) {
+            .productos-lista {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .producto-card {
+                flex: 0 1 calc(33.333% - 20px);
+                margin: 10px;
+            }
+        }
+
+        /* Mejoras de accesibilidad */
+        :focus {
+            outline: 3px solid var(--color-acento);
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Soporte para modo oscuro */
+        @media (prefers-color-scheme: dark) {
+            .producto-card,
+            .producto-form {
+                background-color: #2c3e50;
+                color: #fff;
+            }
+
+            input, 
+            select, 
+            textarea {
+                background-color: #34495e;
+                color: #fff;
+                border-color: #4a6785;
+            }
+        }
+
+        /* Mejoras de rendimiento */
+        .producto-card {
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Soporte para pantallas de alta densidad */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .producto-card img {
+                image-rendering: -webkit-optimize-contrast;
+            }
+        }
+
+        /* Optimizaciones para táctil */
+        @media (hover: none) {
+            .producto-card:hover {
+                transform: none;
+            }
+
+            button {
+                min-height: 44px; /* Área táctil mínima recomendada */
+            }
+        }
+
+        /* Fallbacks para navegadores antiguos */
+        @supports not (gap: 20px) {
+            .productos-lista > * {
+                margin: 10px;
+            }
+        }
+
+        .colores-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .color-group {
+            margin-bottom: 20px;
+        }
+
+        .color-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-input-group input[type="color"] {
+            width: 60px;
+            height: 40px;
+            padding: 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .color-input-group select {
+            flex: 1;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .vista-previa-container {
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .vista-previa-sitio {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            min-height: 300px;
+        }
+
+        .preview-header {
+            height: 60px;
+            background-color: var(--color-principal);
+        }
+
+        .preview-content {
+            padding: 20px;
+            background-color: var(--color-secundario);
+            min-height: 200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .preview-card {
+            background: white;
+            height: 100px;
+            border-radius: 8px;
+            border: 1px solid var(--color-principal);
+        }
+
+        .preview-footer {
+            height: 40px;
+            background-color: var(--color-principal);
+        }
+
+        @media (max-width: 768px) {
+            .colores-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Great+Vibes&family=Lato&family=Montserrat&family=Open+Sans&family=Pacifico&family=Playfair+Display&family=Raleway&family=Roboto&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="admin-nav">
+            <div>
+                <a href="index.html">Ver sitio público</a>
+                <a href="admin.html">Panel Admin</a>
+            </div>
+            <button class="logout-btn" onclick="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+        <h1>Panel de Administración - bygrachi</h1>
+    </header>
+
+    <main>
+        <div class="producto-form">
+            <h2>Agregar/Editar Producto</h2>
+            <form id="formularioProducto" onsubmit="agregarProducto(event)">
+                <select id="categoria" required>
+                    <option value="">Seleccionar Categoría</option>
+                    <!-- Las categorías se cargarán dinámicamente -->
+                </select>
+                <input type="text" id="nombre" placeholder="Nombre del producto" required>
+                <input type="number" id="precio" placeholder="Precio" step="0.01" required>
+                
+                <!-- Nuevo sistema de carga de imágenes -->
+                <div class="imagen-upload">
+                    <label for="imagenFile">Imagen del producto:</label>
+                    <input type="file" id="imagenFile" accept="image/*" onchange="previsualizarImagen(this)">
+                    <div class="imagen-preview">
+                        <img id="previewImagen" src="" alt="Vista previa" style="display: none; max-width: 200px; margin-top: 10px;">
+                    </div>
+                    <p class="imagen-info" style="font-size: 0.9em; color: #666;">
+                        O ingresa una URL de imagen:
+                    </p>
+                    <input type="url" id="imagen" placeholder="URL de la imagen (opcional)">
+                </div>
+
+                <textarea id="descripcion" placeholder="Descripción del producto" required></textarea>
+                <button type="submit">Guardar Producto</button>
+            </form>
+        </div>
+
+        <div class="producto-form">
+            <h2>Gestionar Redes Sociales</h2>
+            <form id="redesForm" onsubmit="actualizarRedes(event)">
+                <input type="url" id="instagram" placeholder="URL de Instagram" required>
+                <input type="url" id="whatsapp" placeholder="URL de WhatsApp (con número)" required>
+                <input type="url" id="tiktok" placeholder="URL de TikTok" required>
+                <button type="submit">Actualizar Redes Sociales</button>
+            </form>
+        </div>
+
+        <div class="producto-form">
+            <h2>Gestionar Logo</h2>
+            <form id="logoForm" onsubmit="actualizarLogo(event)">
+                <div class="logo-preview">
+                    <img id="logoPreview" src="" alt="Logo actual" style="max-width: 200px; margin: 10px 0;">
+                </div>
+                <input type="url" id="logoUrl" placeholder="URL del logo" required>
+                <p style="font-size: 0.9em; color: #666;">
+                    Sube tu imagen a un servicio como Imgur o similar y pega la URL aquí
+                </p>
+                <button type="submit">Actualizar Logo</button>
+            </form>
+        </div>
+
+        <div class="producto-form">
+            <h2>Personalizar Nombre y Subencabezado de la Tienda</h2>
+            <form id="nombreTiendaForm" onsubmit="actualizarEstiloNombre(event)">
+                <div class="form-group">
+                    <label for="colorNombre">Color del nombre:</label>
+                    <input type="color" id="colorNombre" value="#4A4A4A">
+                </div>
+                <div class="form-group">
+                    <label for="tamanoNombre">Tamaño de letra (em):</label>
+                    <input type="range" id="tamanoNombre" min="2" max="5" step="0.1" value="3.5">
+                    <span id="tamanoValor">3.5em</span>
+                </div>
+                <div class="form-group">
+                    <label for="tipoLetra">Tipo de letra:</label>
+                    <select id="tipoLetra">
+                        <option value="'Helvetica Neue', Arial, sans-serif">Helvetica</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Arial Black', Gadget, sans-serif">Arial Black</option>
+                        <option value="'Palatino Linotype', serif">Palatino</option>
+                        <option value="'Comic Sans MS', cursive">Comic Sans</option>
+                        <option value="'Georgia', serif">Georgia</option>
+                        <option value="'Verdana', sans-serif">Verdana</option>
+                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="'Impact', sans-serif">Impact</option>
+                        <option value="'Lucida Sans Unicode', sans-serif">Lucida Sans</option>
+                        <option value="'Dancing Script', cursive">Dancing Script</option>
+                        <option value="'Pacifico', cursive">Pacifico</option>
+                        <option value="'Great Vibes', cursive">Great Vibes</option>
+                        <option value="'Playfair Display', serif">Playfair Display</option>
+                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                        <option value="'Roboto', sans-serif">Roboto</option>
+                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                        <option value="'Lato', sans-serif">Lato</option>
+                        <option value="'Raleway', sans-serif">Raleway</option>
+                    </select>
+                </div>
+                
+                <hr style="margin: 20px 0;">
+                <h3>Subencabezado</h3>
+                <div class="form-group">
+                    <label for="textoSubencabezado">Texto del subencabezado:</label>
+                    <input type="text" id="textoSubencabezado" placeholder="Ej: Tu tienda de moda favorita">
+                </div>
+                <div class="form-group">
+                    <label for="colorSubencabezado">Color del subencabezado:</label>
+                    <input type="color" id="colorSubencabezado" value="#666666">
+                </div>
+                <div class="form-group">
+                    <label for="tamanoSubencabezado">Tamaño de letra (em):</label>
+                    <input type="range" id="tamanoSubencabezado" min="0.8" max="2" step="0.1" value="1.2">
+                    <span id="tamanoSubencabezadoValor">1.2em</span>
+                </div>
+                <div class="form-group">
+                    <label for="tipoLetraSubencabezado">Tipo de letra del subencabezado:</label>
+                    <select id="tipoLetraSubencabezado">
+                        <option value="'Helvetica Neue', Arial, sans-serif">Helvetica</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Arial Black', Gadget, sans-serif">Arial Black</option>
+                        <option value="'Palatino Linotype', serif">Palatino</option>
+                        <option value="'Comic Sans MS', cursive">Comic Sans</option>
+                        <option value="'Georgia', serif">Georgia</option>
+                        <option value="'Verdana', sans-serif">Verdana</option>
+                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="'Impact', sans-serif">Impact</option>
+                        <option value="'Lucida Sans Unicode', sans-serif">Lucida Sans</option>
+                        <option value="'Dancing Script', cursive">Dancing Script</option>
+                        <option value="'Pacifico', cursive">Pacifico</option>
+                        <option value="'Great Vibes', cursive">Great Vibes</option>
+                        <option value="'Playfair Display', serif">Playfair Display</option>
+                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                        <option value="'Roboto', sans-serif">Roboto</option>
+                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                        <option value="'Lato', sans-serif">Lato</option>
+                        <option value="'Raleway', sans-serif">Raleway</option>
+                    </select>
+                </div>
+                <button type="submit">Actualizar Estilos</button>
+            </form>
+        </div>
+
+        <div class="producto-form">
+            <h2>Personalizar Colores del Sitio</h2>
+            <div class="colores-container">
+                <div class="colores-form">
+            <form id="coloresForm" onsubmit="actualizarColores(event)">
+                        <div class="color-group">
+                    <label for="colorPrincipal">Color Principal (Header y Footer):</label>
+                            <div class="color-input-group">
+                    <input type="color" id="colorPrincipal" value="#FF9EC3">
+                                <select id="colorPresetPrincipal" onchange="aplicarColorPreset('Principal')">
+                                    <option value="">Colores predefinidos</option>
+                                    <!-- Rosas -->
+                                    <optgroup label="Tonos Rosa">
+                                        <option value="#FF9EC3">Rosa Claro</option>
+                                        <option value="#FFB6C1">Rosa Pálido</option>
+                                        <option value="#FF69B4">Rosa Fuerte</option>
+                                        <option value="#FFC0CB">Rosa Suave</option>
+                                        <option value="#FFE4E1">Rosa Melocotón</option>
+                                        <option value="#F8BBD0">Rosa Material</option>
+                                        <option value="#F48FB1">Rosa Medio</option>
+                                        <option value="#F06292">Rosa Intenso</option>
+                                        <option value="#EC407A">Rosa Vibrante</option>
+                                        <option value="#E91E63">Rosa Profundo</option>
+                                    </optgroup>
+                                    <!-- Púrpuras -->
+                                    <optgroup label="Tonos Púrpura">
+                                        <option value="#E6E6FA">Lavanda</option>
+                                        <option value="#D8BFD8">Cardo</option>
+                                        <option value="#DDA0DD">Ciruela</option>
+                                        <option value="#DA70D6">Orquídea</option>
+                                        <option value="#BA55D3">Orquídea Medio</option>
+                                    </optgroup>
+                                    <!-- Azules -->
+                                    <optgroup label="Tonos Azul">
+                                        <option value="#E3F2FD">Azul Suave</option>
+                                        <option value="#BBDEFB">Azul Claro</option>
+                                        <option value="#90CAF9">Azul Cielo</option>
+                                        <option value="#64B5F6">Azul Medio</option>
+                                    </optgroup>
+                                    <!-- Verdes -->
+                                    <optgroup label="Tonos Verde">
+                                        <option value="#E8F5E9">Verde Suave</option>
+                                        <option value="#C8E6C9">Verde Menta</option>
+                                        <option value="#A5D6A7">Verde Pastel</option>
+                                        <option value="#81C784">Verde Medio</option>
+                                    </optgroup>
+                                </select>
+                </div>
+                        </div>
+
+                        <div class="color-group">
+                    <label for="colorSecundario">Color de Fondo:</label>
+                            <div class="color-input-group">
+                    <input type="color" id="colorSecundario" value="#FFB6C9">
+                                <select id="colorPresetSecundario" onchange="aplicarColorPreset('Secundario')">
+                                    <option value="">Colores predefinidos</option>
+                                    <!-- Pasteles -->
+                                    <optgroup label="Tonos Pastel">
+                                        <option value="#FFE4E1">Melocotón Claro</option>
+                                        <option value="#FFF0F5">Rosa Bruma</option>
+                                        <option value="#F5F5F5">Gris Claro</option>
+                                        <option value="#F0F8FF">Azul Alice</option>
+                                        <option value="#F0FFF0">Miel Rocío</option>
+                                    </optgroup>
+                                    <!-- Neutros -->
+                                    <optgroup label="Tonos Neutros">
+                                        <option value="#FAFAFA">Blanco Humo</option>
+                                        <option value="#F5F5F5">Blanco Nieve</option>
+                                        <option value="#EEEEEE">Gris Perla</option>
+                                        <option value="#E0E0E0">Gris Plata</option>
+                                    </optgroup>
+                                    <!-- Cálidos -->
+                                    <optgroup label="Tonos Cálidos">
+                                        <option value="#FFF5EE">Concha</option>
+                                        <option value="#FFEFD5">Papaya</option>
+                                        <option value="#FAFAD2">Limón Claro</option>
+                                        <option value="#FFFACD">Limón Gasa</option>
+                                    </optgroup>
+                                    <!-- Fríos -->
+                                    <optgroup label="Tonos Fríos">
+                                        <option value="#F0FFFF">Azul Celeste</option>
+                                        <option value="#F0F8FF">Azul Alicia</option>
+                                        <option value="#F5FFFA">Menta Crema</option>
+                                        <option value="#F0FFF0">Miel Rocío</option>
+                                    </optgroup>
+                                </select>
+                </div>
+                        </div>
+
+                        <div class="color-group">
+                    <label for="colorAcento">Color de Acentos (Botones y Precios):</label>
+                            <div class="color-input-group">
+                    <input type="color" id="colorAcento" value="#FF69B4">
+                                <select id="colorPresetAcento" onchange="aplicarColorPreset('Acento')">
+                                    <option value="">Colores predefinidos</option>
+                                    <!-- Vibrantes -->
+                                    <optgroup label="Tonos Vibrantes">
+                                        <option value="#FF1493">Rosa Profundo</option>
+                                        <option value="#FF007F">Rosa Brillante</option>
+                                        <option value="#FF4081">Rosa Acento</option>
+                                        <option value="#F50057">Rosa Vibrante</option>
+                                    </optgroup>
+                                    <!-- Metálicos -->
+                                    <optgroup label="Tonos Metálicos">
+                                        <option value="#FFD700">Dorado</option>
+                                        <option value="#C0C0C0">Plateado</option>
+                                        <option value="#B87333">Cobre</option>
+                                        <option value="#CD7F32">Bronce</option>
+                                    </optgroup>
+                                    <!-- Joyería -->
+                                    <optgroup label="Tonos Joya">
+                                        <option value="#9B111E">Rubí</option>
+                                        <option value="#0F52BA">Zafiro</option>
+                                        <option value="#50C878">Esmeralda</option>
+                                        <option value="#B76E79">Malva</option>
+                                    </optgroup>
+                                    <!-- Oscuros -->
+                                    <optgroup label="Tonos Oscuros">
+                                        <option value="#880E4F">Rosa Oscuro</option>
+                                        <option value="#4A148C">Púrpura Oscuro</option>
+                                        <option value="#311B92">Índigo Oscuro</option>
+                                        <option value="#1A237E">Azul Oscuro</option>
+                                    </optgroup>
+                                </select>
+                </div>
+                </div>
+
+                <button type="submit">Actualizar Colores</button>
+            </form>
+                </div>
+
+                <div class="vista-previa-container">
+                    <h3>Vista Previa</h3>
+                    <div class="vista-previa-sitio">
+                        <div class="preview-header"></div>
+                        <div class="preview-content">
+                            <div class="preview-card"></div>
+                            <div class="preview-card"></div>
+                        </div>
+                        <div class="preview-footer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="producto-form">
+            <h2>Gestionar Categorías</h2>
+            <form id="categoriaForm" onsubmit="agregarCategoria(event)">
+                <input type="text" id="nuevaCategoria" placeholder="Nueva categoría" required>
+                <button type="submit">Agregar Categoría</button>
+            </form>
+            <div id="listaCategorias" class="categorias-lista" style="margin-top: 20px;">
+                <!-- Aquí se mostrarán las categorías -->
+            </div>
+        </div>
+
+        <div class="producto-form">
+            <h2>Cambiar Credenciales de Administrador</h2>
+            <form id="credencialesForm" onsubmit="actualizarCredenciales(event)">
+                <div class="form-group">
+                    <label for="usuarioActual">Usuario Actual:</label>
+                    <input type="text" id="usuarioActual" required>
+                </div>
+                <div class="form-group">
+                    <label for="claveActual">Contraseña Actual:</label>
+                    <input type="password" id="claveActual" required>
+                </div>
+                <hr style="margin: 20px 0;">
+                <div class="form-group">
+                    <label for="nuevoUsuario">Nuevo Usuario:</label>
+                    <input type="text" id="nuevoUsuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="nuevaClave">Nueva Contraseña:</label>
+                    <input type="password" id="nuevaClave" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmarClave">Confirmar Nueva Contraseña:</label>
+                    <input type="password" id="confirmarClave" required>
+                </div>
+                <button type="submit">Actualizar Credenciales</button>
+            </form>
+        </div>
+
+        <div id="listaProductos" class="productos-lista">
+            <!-- Aquí se mostrarán los productos -->
+        </div>
+    </main>
+
+    <script>
+        // Verificar autenticación al inicio
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+
+        let productos = [];
+        let editandoId = null;
+
+        // Función para previsualizar la imagen
+        function previsualizarImagen(input) {
+            const preview = document.getElementById('previewImagen');
+            const file = input.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    // Limpiar el campo de URL si se sube un archivo
+                    document.getElementById('imagen').value = '';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Modificar la función agregarProducto
+        function agregarProducto(event) {
+            event.preventDefault();
+            
+            const imagenFile = document.getElementById('imagenFile').files[0];
+            const imagenUrl = document.getElementById('imagen').value;
+            
+            // Si hay un archivo, usar su data URL, si no, usar la URL ingresada
+            let imagenFinal = imagenUrl;
+            if (imagenFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const producto = {
+                        categoria: document.getElementById('categoria').value,
+                        nombre: document.getElementById('nombre').value,
+                        precio: parseFloat(document.getElementById('precio').value),
+                        imagen: e.target.result, // Usar la imagen convertida a base64
+                        descripcion: document.getElementById('descripcion').value,
+                        id: editandoId || Date.now()
+                    };
+
+                    guardarProducto(producto);
+                };
+                reader.readAsDataURL(imagenFile);
+            } else {
+                // Si no hay archivo, usar la URL directamente
+                const producto = {
+                    categoria: document.getElementById('categoria').value,
+                    nombre: document.getElementById('nombre').value,
+                    precio: parseFloat(document.getElementById('precio').value),
+                    imagen: imagenUrl || 'https://via.placeholder.com/150',
+                    descripcion: document.getElementById('descripcion').value,
+                    id: editandoId || Date.now()
+                };
+
+                guardarProducto(producto);
+            }
+        }
+
+        // Nueva función para guardar el producto
+        function guardarProducto(producto) {
+            if (editandoId) {
+                productos = productos.filter(p => p.id !== editandoId);
+                editandoId = null;
+            }
+
+            productos.push(producto);
+            mostrarProductos();
+            document.getElementById('formularioProducto').reset();
+            document.getElementById('previewImagen').style.display = 'none';
+            localStorage.setItem('productos', JSON.stringify(productos));
+        }
+
+        // Modificar la función editarProducto
+        function editarProducto(id) {
+            const producto = productos.find(p => p.id === id);
+            if (producto) {
+                document.getElementById('categoria').value = producto.categoria;
+                document.getElementById('nombre').value = producto.nombre;
+                document.getElementById('precio').value = producto.precio;
+                document.getElementById('descripcion').value = producto.descripcion;
+                
+                // Mostrar la imagen actual en la vista previa
+                const preview = document.getElementById('previewImagen');
+                preview.src = producto.imagen;
+                preview.style.display = 'block';
+                
+                // Si la imagen es una URL, ponerla en el campo de URL
+                if (producto.imagen.startsWith('http')) {
+                    document.getElementById('imagen').value = producto.imagen;
+                }
+                
+                editandoId = id;
+            }
+        }
+
+        function mostrarProductos() {
+            const contenedor = document.getElementById('listaProductos');
+            contenedor.innerHTML = '';
+
+            productos.forEach(producto => {
+                const card = document.createElement('div');
+                card.className = 'producto-card';
+                card.innerHTML = `
+                    <img src="${producto.imagen}" alt="${producto.nombre}">
+                    <h3>${producto.nombre}</h3>
+                    <p>Categoría: ${producto.categoria}</p>
+                    <p class="precio">$${producto.precio.toFixed(2)}</p>
+                    <p>${producto.descripcion}</p>
+                    <button class="editar-btn" onclick="editarProducto(${producto.id})">Editar</button>
+                    <button class="eliminar-btn" onclick="eliminarProducto(${producto.id})">Eliminar</button>
+                `;
+                contenedor.appendChild(card);
+            });
+        }
+
+        function eliminarProducto(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+                productos = productos.filter(producto => producto.id !== id);
+                mostrarProductos();
+                localStorage.setItem('productos', JSON.stringify(productos));
+            }
+        }
+
+        function cerrarSesion() {
+            if (confirm('¿Deseas cerrar sesión?')) {
+                sessionStorage.removeItem('adminLoggedIn');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Cargar redes sociales guardadas
+        function cargarRedesSociales() {
+            const redes = JSON.parse(localStorage.getItem('redesSociales')) || {
+                instagram: 'https://instagram.com/bygrachi',
+                whatsapp: 'https://wa.me/1234567890',
+                tiktok: 'https://tiktok.com/@bygrachi'
+            };
+            
+            document.getElementById('instagram').value = redes.instagram;
+            document.getElementById('whatsapp').value = redes.whatsapp;
+            document.getElementById('tiktok').value = redes.tiktok;
+        }
+
+        function actualizarRedes(event) {
+            event.preventDefault();
+            
+            const redes = {
+                instagram: document.getElementById('instagram').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                tiktok: document.getElementById('tiktok').value
+            };
+
+            localStorage.setItem('redesSociales', JSON.stringify(redes));
+            alert('Redes sociales actualizadas correctamente');
+        }
+
+        // Función para cargar el logo guardado
+        function cargarLogo() {
+            const logoUrl = localStorage.getItem('logoUrl') || 'logo.png';
+            document.getElementById('logoUrl').value = logoUrl;
+            document.getElementById('logoPreview').src = logoUrl;
+        }
+
+        // Función para actualizar el logo
+        function actualizarLogo(event) {
+            event.preventDefault();
+            
+            const logoUrl = document.getElementById('logoUrl').value;
+            localStorage.setItem('logoUrl', logoUrl);
+            
+            // Actualizar la vista previa
+            document.getElementById('logoPreview').src = logoUrl;
+            
+            alert('Logo actualizado correctamente');
+        }
+
+        // Función para actualizar el estilo del nombre
+        function actualizarEstiloNombre(event) {
+            event.preventDefault();
+            
+            const estiloNombre = {
+                color: document.getElementById('colorNombre').value,
+                tamano: document.getElementById('tamanoNombre').value,
+                tipoLetra: document.getElementById('tipoLetra').value,
+                subencabezado: {
+                    texto: document.getElementById('textoSubencabezado').value,
+                    color: document.getElementById('colorSubencabezado').value,
+                    tamano: document.getElementById('tamanoSubencabezado').value,
+                    tipoLetra: document.getElementById('tipoLetraSubencabezado').value
+                }
+            };
+
+            localStorage.setItem('estiloNombre', JSON.stringify(estiloNombre));
+            alert('Estilos actualizados correctamente');
+        }
+
+        // Actualizar el valor mostrado del tamaño
+        document.getElementById('tamanoNombre').addEventListener('input', function() {
+            document.getElementById('tamanoValor').textContent = this.value + 'em';
+        });
+
+        // Cargar estilo guardado
+        function cargarEstiloNombre() {
+            const estiloGuardado = JSON.parse(localStorage.getItem('estiloNombre')) || {
+                color: '#4A4A4A',
+                tamano: '3.5',
+                tipoLetra: "'Helvetica Neue', Arial, sans-serif",
+                subencabezado: {
+                    texto: 'Tu tienda de moda favorita',
+                    color: '#666666',
+                    tamano: '1.2',
+                    tipoLetra: "'Helvetica Neue', Arial, sans-serif"
+                }
+            };
+
+            document.getElementById('colorNombre').value = estiloGuardado.color;
+            document.getElementById('tamanoNombre').value = estiloGuardado.tamano;
+            document.getElementById('tipoLetra').value = estiloGuardado.tipoLetra;
+            document.getElementById('tamanoValor').textContent = estiloGuardado.tamano + 'em';
+            
+            document.getElementById('textoSubencabezado').value = estiloGuardado.subencabezado.texto;
+            document.getElementById('colorSubencabezado').value = estiloGuardado.subencabezado.color;
+            document.getElementById('tamanoSubencabezado').value = estiloGuardado.subencabezado.tamano;
+            document.getElementById('tipoLetraSubencabezado').value = estiloGuardado.subencabezado.tipoLetra || "'Helvetica Neue', Arial, sans-serif";
+            document.getElementById('tamanoSubencabezadoValor').textContent = estiloGuardado.subencabezado.tamano + 'em';
+        }
+
+        // Agregar evento para el rango del subencabezado
+        document.getElementById('tamanoSubencabezado').addEventListener('input', function() {
+            document.getElementById('tamanoSubencabezadoValor').textContent = this.value + 'em';
+        });
+
+        function actualizarColores(event) {
+            event.preventDefault();
+            
+            const colores = {
+                principal: document.getElementById('colorPrincipal').value,
+                secundario: document.getElementById('colorSecundario').value,
+                acento: document.getElementById('colorAcento').value
+            };
+
+            localStorage.setItem('coloresSitio', JSON.stringify(colores));
+            alert('Colores actualizados correctamente');
+            
+            // Actualizar colores en tiempo real
+            aplicarColores(colores);
+        }
+
+        function cargarColores() {
+            const coloresGuardados = JSON.parse(localStorage.getItem('coloresSitio')) || {
+                principal: '#FF9EC3',
+                secundario: '#FFB6C9',
+                acento: '#FF69B4'
+            };
+
+            document.getElementById('colorPrincipal').value = coloresGuardados.principal;
+            document.getElementById('colorSecundario').value = coloresGuardados.secundario;
+            document.getElementById('colorAcento').value = coloresGuardados.acento;
+            
+            aplicarColores(coloresGuardados);
+        }
+
+        function aplicarColores(colores) {
+            document.documentElement.style.setProperty('--color-principal', colores.principal);
+            document.documentElement.style.setProperty('--color-secundario', colores.secundario);
+            document.documentElement.style.setProperty('--color-acento', colores.acento);
+            
+            // Actualizar vista previa
+            const vistaPrevia = document.querySelector('.vista-previa');
+            vistaPrevia.style.backgroundColor = colores.secundario;
+            vistaPrevia.style.border = `2px solid ${colores.principal}`;
+            vistaPrevia.style.color = '#4A4A4A';
+        }
+
+        // Array para almacenar las categorías
+        let categorias = [];
+
+        function agregarCategoria(event) {
+            event.preventDefault();
+            const nuevaCategoria = document.getElementById('nuevaCategoria').value.trim();
+            
+            if (!categorias.includes(nuevaCategoria)) {
+                categorias.push(nuevaCategoria);
+                localStorage.setItem('categorias', JSON.stringify(categorias));
+                actualizarListaCategorias();
+                actualizarSelectCategorias();
+                document.getElementById('nuevaCategoria').value = '';
+            } else {
+                alert('Esta categoría ya existe');
+            }
+        }
+
+        function eliminarCategoria(categoria) {
+            if (confirm(`¿Estás seguro de eliminar la categoría "${categoria}"?`)) {
+                const productosEnCategoria = productos.filter(p => p.categoria === categoria);
+                if (productosEnCategoria.length > 0) {
+                    if (!confirm(`Hay ${productosEnCategoria.length} productos en esta categoría. ¿Deseas eliminarlos también?`)) {
+                        return;
+                    }
+                    productos = productos.filter(p => p.categoria !== categoria);
+                    localStorage.setItem('productos', JSON.stringify(productos));
+                    mostrarProductos();
+                }
+                
+                categorias = categorias.filter(c => c !== categoria);
+                localStorage.setItem('categorias', JSON.stringify(categorias));
+                actualizarListaCategorias();
+                actualizarSelectCategorias();
+            }
+        }
+
+        function actualizarListaCategorias() {
+            const contenedor = document.getElementById('listaCategorias');
+            contenedor.innerHTML = '';
+            
+            categorias.forEach(categoria => {
+                const categoriaElement = document.createElement('div');
+                categoriaElement.className = 'categoria-item';
+                categoriaElement.style.cssText = `
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 10px;
+                    margin: 5px 0;
+                    background-color: #f8f9fa;
+                    border-radius: 5px;
+                `;
+                
+                categoriaElement.innerHTML = `
+                    <span>${categoria}</span>
+                    <button onclick="eliminarCategoria('${categoria}')" 
+                            style="background-color: #ff4757; color: white; border: none; 
+                            padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                        Eliminar
+                    </button>
+                `;
+                
+                contenedor.appendChild(categoriaElement);
+            });
+        }
+
+        function actualizarSelectCategorias() {
+            const select = document.getElementById('categoria');
+            select.innerHTML = '<option value="">Seleccionar Categoría</option>';
+            
+            categorias.forEach(categoria => {
+                const option = document.createElement('option');
+                option.value = categoria;
+                option.textContent = categoria;
+                select.appendChild(option);
+            });
+        }
+
+        function actualizarCredenciales(event) {
+            event.preventDefault();
+            
+            const usuarioActual = document.getElementById('usuarioActual').value;
+            const claveActual = document.getElementById('claveActual').value;
+            const nuevoUsuario = document.getElementById('nuevoUsuario').value;
+            const nuevaClave = document.getElementById('nuevaClave').value;
+            const confirmarClave = document.getElementById('confirmarClave').value;
+
+            // Obtener credenciales actuales
+            const credencialesGuardadas = JSON.parse(localStorage.getItem('adminCredenciales')) || {
+                usuario: 'admin',
+                clave: 'bygrachi2024'
+            };
+
+            // Verificar credenciales actuales
+            if (usuarioActual !== credencialesGuardadas.usuario || 
+                claveActual !== credencialesGuardadas.clave) {
+                alert('Las credenciales actuales son incorrectas');
+                return;
+            }
+
+            // Verificar que las nuevas contraseñas coincidan
+            if (nuevaClave !== confirmarClave) {
+                alert('Las nuevas contraseñas no coinciden');
+                return;
+            }
+
+            // Verificar longitud mínima
+            if (nuevaClave.length < 8) {
+                alert('La nueva contraseña debe tener al menos 8 caracteres');
+                return;
+            }
+
+            // Guardar nuevas credenciales
+            const nuevasCredenciales = {
+                usuario: nuevoUsuario,
+                clave: nuevaClave
+            };
+
+            localStorage.setItem('adminCredenciales', JSON.stringify(nuevasCredenciales));
+            alert('Credenciales actualizadas correctamente. Por favor, inicie sesión nuevamente.');
+            
+            // Cerrar sesión para forzar nuevo inicio de sesión
+            sessionStorage.removeItem('adminLoggedIn');
+            window.location.href = 'login.html';
+        }
+
+        // Modificar window.onload
+        window.onload = function() {
+            if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Cargar categorías guardadas
+            const categoriasGuardadas = localStorage.getItem('categorias');
+            if (categoriasGuardadas) {
+                categorias = JSON.parse(categoriasGuardadas);
+            } else {
+                // Categorías por defecto si no hay guardadas
+                categorias = ['ropa', 'accesorios', 'calzado'];
+                localStorage.setItem('categorias', JSON.stringify(categorias));
+            }
+            
+            actualizarListaCategorias();
+            actualizarSelectCategorias();
+
+            const productosGuardados = localStorage.getItem('productos');
+            if (productosGuardados) {
+                productos = JSON.parse(productosGuardados);
+                mostrarProductos();
+            }
+            cargarRedesSociales();
+            cargarLogo();
+            cargarEstiloNombre();
+            cargarColores();
+
+            // Cargar usuario actual en el formulario
+            const credencialesGuardadas = JSON.parse(localStorage.getItem('adminCredenciales')) || {
+                usuario: 'admin',
+                clave: 'bygrachi2024'
+            };
+            document.getElementById('usuarioActual').value = credencialesGuardadas.usuario;
+        };
+
+        // Agregar eventos para actualización en tiempo real
+        ['colorPrincipal', 'colorSecundario', 'colorAcento'].forEach(id => {
+            document.getElementById(id).addEventListener('input', function() {
+                const colores = {
+                    principal: document.getElementById('colorPrincipal').value,
+                    secundario: document.getElementById('colorSecundario').value,
+                    acento: document.getElementById('colorAcento').value
+                };
+                aplicarColores(colores);
+            });
+        });
+
+        function aplicarColorPreset(tipo) {
+            const select = document.getElementById(`colorPreset${tipo}`);
+            const input = document.getElementById(`color${tipo}`);
+            if (select.value) {
+                input.value = select.value;
+                actualizarVistaPrevia();
+            }
+        }
+
+        function actualizarVistaPrevia() {
+            const colores = {
+                principal: document.getElementById('colorPrincipal').value,
+                secundario: document.getElementById('colorSecundario').value,
+                acento: document.getElementById('colorAcento').value
+            };
+            
+            document.documentElement.style.setProperty('--color-principal', colores.principal);
+            document.documentElement.style.setProperty('--color-secundario', colores.secundario);
+            document.documentElement.style.setProperty('--color-acento', colores.acento);
+        }
+
+        // Agregar eventos para actualización en tiempo real
+        ['colorPrincipal', 'colorSecundario', 'colorAcento'].forEach(id => {
+            document.getElementById(id).addEventListener('input', actualizarVistaPrevia);
+        });
+    </script>
+</body>
+</html> 
